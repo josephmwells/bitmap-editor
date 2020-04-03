@@ -122,7 +122,7 @@ public:
     BitmapException() = delete;
 
     BitmapException(const std::string& message, uint32_t position);
-    BitmapException(std::string&& message, uint32_t position);
+    BitmapException(std::string& message, uint32_t position);
 
     /**
      * prints out the exception in the form:

@@ -70,7 +70,7 @@ BitmapException::BitmapException(const std::string & message, uint32_t position)
 {
 }
 
-BitmapException::BitmapException(std::string && message, uint32_t position)
+BitmapException::BitmapException(std::string & message, uint32_t position)
 {
 }
 
