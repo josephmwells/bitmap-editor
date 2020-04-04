@@ -81,6 +81,7 @@ std::istream & operator>>(std::istream & in, Bitmap & b)
     }
   }
 
+  // Read in pixel data
   for(int i = 0; i < b.raw_bitmap_size; i += 4)
   {
     uint32_t pixel;
@@ -178,7 +179,7 @@ std::ostream & operator<<(std::ostream & in, const Bitmap & b)
     offset += 4;
   }
 
-  std::cout << "Current offset after writing:: " << offset << '\n';
+  std::cout << "Current offset after writing:: " << std::dec <<  offset << '\n';
   return in;
 }
 
