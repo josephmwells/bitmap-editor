@@ -124,6 +124,8 @@ public:
     BitmapException(const std::string& message, uint32_t position);
     BitmapException(std::string& message, uint32_t position);
 
+    const char* what() const noexcept;
+
     /**
      * prints out the exception in the form:
      *

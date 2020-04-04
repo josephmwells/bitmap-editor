@@ -77,5 +77,3 @@ BitmapException::BitmapException(std::string & message, uint32_t position)
 void BitmapException::print_exception()
 {
 }
-
-
