@@ -212,6 +212,7 @@ unsigned char& Bitmap::r(uint32_t x, uint32_t y)
     case(32):
       return data.at(4 * (y * image_width + x) + 3);
   }
+  throw BitmapException("invalid bitmap", 0);
 }
 
 unsigned char& Bitmap::g(uint32_t x, uint32_t y)
@@ -222,6 +223,7 @@ unsigned char& Bitmap::g(uint32_t x, uint32_t y)
     case(32):
       return data.at(4 * (y * image_width + x) + 2);
    }
+   throw BitmapException("invalid bitmap", 0);
 }
 
 unsigned char& Bitmap::b(uint32_t x, uint32_t y)
@@ -232,6 +234,7 @@ unsigned char& Bitmap::b(uint32_t x, uint32_t y)
     case(32):
       return data.at(4 * (y * image_width + x) + 1);
    }
+   throw BitmapException("invalid bitmap", 0);
 }
 
 unsigned char& Bitmap::a(uint32_t x, uint32_t y)
@@ -242,35 +245,37 @@ unsigned char& Bitmap::a(uint32_t x, uint32_t y)
     case(32):
       return data.at(4 * (y * image_width + x));
    }
+   throw BitmapException("invalid bitmap", 0);
 }
+
 void cellShade(Bitmap & b)
 {
   for(int y = 0; y < b.height(); ++y) {
     for(int x = 0; x < b.width(); ++x) {
-      uint8_t red = b.r(x, y);
-      uint8_t green = b.g(x, y);
-      uint8_t blue = b.b(x, y);
+      uint8_t& red = (uint8_t&)b.r(x, y);
+      uint8_t& green = (uint8_t&)b.g(x, y);
+      uint8_t& blue = (uint8_t&)b.b(x, y);
       
       if(red < 64)
         red = 0;
       else if(red < 192)
-        red = 127;
+        red = 128;
       else
-        red = 254;
+        red = 255;
       
       if(green < 64)
         green = 0;
       else if(green < 192)
-        green = 127;
+        green = 128;
       else
-        green = 254;
+        green = 255;
 
       if(blue < 64)
         blue = 0;
       else if(blue < 192)
-        blue = 127;
+        blue = 128;
       else
-        blue = 254;
+        blue = 255;
     }
   }
 }
