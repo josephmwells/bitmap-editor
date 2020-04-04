@@ -81,11 +81,12 @@ std::istream & operator>>(std::istream & in, Bitmap & b)
     }
   }
 
-  for(int i = 0; i < b.raw_bitmap_size; ++i)
+  for(int i = 0; i < b.raw_bitmap_size; i += 4)
   {
     uint32_t pixel;
     in.read((char*)&pixel, 4);
     b.data.push_back(pixel);
+    offset += 4;
   }
 
   std::cout << "Current offset after reading in \"important colors\" field: " << offset << '\n';
@@ -165,18 +166,19 @@ std::ostream & operator<<(std::ostream & in, const Bitmap & b)
     // Read in color space
     for(uint8_t color_space : b.color_space)
     {
-     in << color_space;
-     offset += 1;
+      in.write((char*)&color_space, 1);
+      offset += 1;
     }
    
   }
 
   for(uint32_t pixel : b.data)
   {
-    in << pixel;
-    offset += 1;
+    in.write((char*)&pixel, 4);
+    offset += 4;
   }
 
+  std::cout << "Current offset after writing:: " << offset << '\n';
   return in;
 }
 
@@ -203,6 +205,7 @@ void Bitmap::print_header()
     std::cout << "Gree Mask: " << std::hex << green_mask << '\n';
     std::cout << "Blue Mask: " << std::hex << blue_mask << '\n';
     std::cout << "Alpha Mask: " << std::hex << alpha_mask << '\n';
+    std::cout << std::dec << '\n';
   }
 }
 
