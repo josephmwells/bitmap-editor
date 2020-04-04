@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+#include <string.h>
 
 class Bitmap
 {
@@ -30,9 +32,32 @@ private:
      */
     friend std::ostream& operator<<(std::ostream& in, const Bitmap& b);
 
+    // Header Data
+    // Block 1
+    char file_type[2];
+    uint32_t file_size;
+    uint32_t garbage;
+    uint32_t pixel_data_offset;
+    // Block 2
+    uint32_t header_size;
+    int32_t image_width, image_height;
+    uint16_t planes;
+    uint16_t bits_per_pixel;
+    uint32_t compression;
+    uint32_t raw_bitmap_size;
+    int32_t x_pixels_per_meter, y_pixels_per_meter;
+    uint32_t total_colors;
+    uint32_t important_colors;
+    // Block 3
+    uint32_t red_mask, green_mask, blue_mask, alpha_mask;
+    std::vector<uint8_t> color_space; // 68 bytes of this
+    
+    std::vector<uint32_t> data;
 
 public:
     Bitmap();
+
+    void print_header();
 };
 
 /**
@@ -125,7 +150,6 @@ public:
     BitmapException(std::string& message, uint32_t position);
 
     const char* what() const noexcept;
-
     /**
      * prints out the exception in the form:
      *
