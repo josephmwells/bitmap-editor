@@ -12,8 +12,7 @@ std::istream & operator>>(std::istream & in, Bitmap & b)
   in >> b.file_type[0] >> b.file_type[1];
   b.file_type[2] = '\0';
   if(strncmp(b.file_type, "BM", 2) != 0) {
-    std::cout << "Error in file type" << '\n';
-    return in;
+    throw BitmapException("invalid file type", offset);
   }
   offset += 2;
 
@@ -82,105 +81,100 @@ std::istream & operator>>(std::istream & in, Bitmap & b)
   }
 
   // Read in pixel data
-  for(int i = 0; i < b.raw_bitmap_size; i += 4)
+  for(int i = 0; i < b.raw_bitmap_size; ++i)
   {
-    uint32_t pixel;
-    in.read((char*)&pixel, 4);
+    unsigned char pixel;
+    in.read((char*)&pixel, 1);
     b.data.push_back(pixel);
-    offset += 4;
+    offset += 1;
   }
 
-  std::cout << "Current offset after reading in \"important colors\" field: " << offset << '\n';
-  b.print_header();
-
+  std::cout << offset << " bytes written\n";
   return in;
 }
 
-std::ostream & operator<<(std::ostream & in, const Bitmap & b)
+std::ostream & operator<<(std::ostream & out, const Bitmap & b)
 {  
   int offset{0};
 
-  // Read in file type
-  in << b.file_type[0] << b.file_type[1];
-  if(strncmp(b.file_type, "BM", 2) != 0) {
-    std::cout << "Error in file type" << '\n';
-    return in;
-  }
+  // Write file type
+  out << b.file_type[0] << b.file_type[1];
   offset += 2;
 
-  // Read in file size
-  in.write((char*)&b.file_size, 4);
+  // Write file size
+  out.write((char*)&b.file_size, 4);
   offset += 4;
-  // Read in garbage
-  in.write((char*)&b.garbage, 4);
+  // Write garbage
+  out.write((char*)&b.garbage, 4);
   offset += 4;
-  // Read in pixel data offset
-  in.write((char*)&b.pixel_data_offset, 4);
+  // Write pixel data offset
+  out.write((char*)&b.pixel_data_offset, 4);
   offset += 4;
-  // Read in header size
-  in.write((char*)&b.header_size, 4);
+  // Write header size
+  out.write((char*)&b.header_size, 4);
   offset += 4;
-  // Read in image width
-  in.write((char*)&b.image_width, 4);
+  // Write image width
+  out.write((char*)&b.image_width, 4);
   offset += 4;
-  // Read in image height
-  in.write((char*)&b.image_height, 4);
+  // Write image height
+  out.write((char*)&b.image_height, 4);
   offset += 4;
-  // Read in planes
-  in.write((char*)&b.planes, 2);
+  // Write planes
+  out.write((char*)&b.planes, 2);
   offset += 2;
-  // Read in bits per pixel
-  in.write((char*)&b.bits_per_pixel, 2);
+  // Write bits per pixel
+  out.write((char*)&b.bits_per_pixel, 2);
   offset += 2;
-  // Read in compression
-  in.write((char*)&b.compression, 4);
+  // Write compression
+  out.write((char*)&b.compression, 4);
   offset += 4;
-  // Read in raw bitmap size
-  in.write((char*)&b.raw_bitmap_size, 4);
+  // Write raw bitmap size
+  out.write((char*)&b.raw_bitmap_size, 4);
   offset += 4;
-  // Read in x pixels per meter
-  in.write((char*)&b.x_pixels_per_meter, 4);
+  // Write x pixels per meter
+  out.write((char*)&b.x_pixels_per_meter, 4);
   offset += 4;
-  // Read in y pixels per meter
-  in.write((char*)&b.y_pixels_per_meter, 4);
+  // Write y pixels per meter
+  out.write((char*)&b.y_pixels_per_meter, 4);
   offset += 4;
-  // Read in total colors
-  in.write((char*)&b.total_colors, 4);
+  // Write total colors
+  out.write((char*)&b.total_colors, 4);
   offset += 4;
-  // Read in important colors
-  in.write((char*)&b.important_colors, 4);
+  // Write important colors
+  out.write((char*)&b.important_colors, 4);
   offset += 4;
 
   if(b.compression == 3) {
-    // Read in red mask
-    in.write((char*)&b.red_mask, 4);
+    // Write red mask
+    out.write((char*)&b.red_mask, 4);
     offset += 4;
-    // Read in green mask
-    in.write((char*)&b.green_mask, 4);
+    // Write green mask
+    out.write((char*)&b.green_mask, 4);
     offset += 4;
-    // Read in blue mask
-    in.write((char*)&b.blue_mask, 4);
+    // Write blue mask
+    out.write((char*)&b.blue_mask, 4);
     offset += 4;
-    // Read in alpha mask
-    in.write((char*)&b.alpha_mask, 4);
+    // Write alpha mask
+    out.write((char*)&b.alpha_mask, 4);
     offset += 4;
-    // Read in color space
+    // Write color space
     for(uint8_t color_space : b.color_space)
     {
-      in.write((char*)&color_space, 1);
+      out.write((char*)&color_space, 1);
       offset += 1;
     }
    
   }
-
-  for(uint32_t pixel : b.data)
+  
+  // Write pixel data
+  for(unsigned char pixel : b.data)
   {
-    in.write((char*)&pixel, 4);
-    offset += 4;
+    out.write((char*)&pixel, 1);
+    offset += 1;
   }
 
-  std::cout << "Current offset after writing:: " << std::dec <<  offset << '\n';
-  return in;
+  std::cout << std::dec <<  offset << " bytes written\n";
+  return out;
 }
 
 void Bitmap::print_header()
@@ -210,8 +204,75 @@ void Bitmap::print_header()
   }
 }
 
+unsigned char& Bitmap::r(uint32_t x, uint32_t y)
+{
+  switch(bits_per_pixel) {
+    case(24):
+      return data.at(4 * (y * image_width + x));
+    case(32):
+      return data.at(4 * (y * image_width + x) + 3);
+  }
+}
+
+unsigned char& Bitmap::g(uint32_t x, uint32_t y)
+{
+   switch(bits_per_pixel) {
+    case(24):
+      return data.at(4 * (y * image_width + x));
+    case(32):
+      return data.at(4 * (y * image_width + x) + 2);
+   }
+}
+
+unsigned char& Bitmap::b(uint32_t x, uint32_t y)
+{
+  switch(bits_per_pixel) {
+    case(24):
+      return data.at(4 * (y * image_width + x));
+    case(32):
+      return data.at(4 * (y * image_width + x) + 1);
+   }
+}
+
+unsigned char& Bitmap::a(uint32_t x, uint32_t y)
+{
+  switch(bits_per_pixel) {
+    case(24):
+      throw BitmapException("no alpha channel in 24bit image", 4 * (y * image_width + x));
+    case(32):
+      return data.at(4 * (y * image_width + x));
+   }
+}
 void cellShade(Bitmap & b)
 {
+  for(int y = 0; y < b.height(); ++y) {
+    for(int x = 0; x < b.width(); ++x) {
+      uint8_t red = b.r(x, y);
+      uint8_t green = b.g(x, y);
+      uint8_t blue = b.b(x, y);
+      
+      if(red < 64)
+        red = 0;
+      else if(red < 192)
+        red = 127;
+      else
+        red = 254;
+      
+      if(green < 64)
+        green = 0;
+      else if(green < 192)
+        green = 127;
+      else
+        green = 254;
+
+      if(blue < 64)
+        blue = 0;
+      else if(blue < 192)
+        blue = 127;
+      else
+        blue = 254;
+    }
+  }
 }
 
 void grayscale(Bitmap & b)
@@ -264,14 +325,20 @@ void scaleDown(Bitmap & b)
 
 BitmapException::BitmapException(const std::string & message, uint32_t position)
 {
+  _message = message;
+  _position = position;
 }
 
 BitmapException::BitmapException(std::string & message, uint32_t position)
 {
+  _message = message;
+  _position = position;
 }
 
 void BitmapException::print_exception()
 {
+  std::cout << "Error in bitmap at position 0x" << std::hex << _position;
+  std::cout << " : " << _message << '\n';
 }
 
 const char* BitmapException::what() const noexcept

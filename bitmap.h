@@ -30,7 +30,7 @@ private:
      *
      * @throws failure if we failed to write.
      */
-    friend std::ostream& operator<<(std::ostream& in, const Bitmap& b);
+    friend std::ostream& operator<<(std::ostream& out, const Bitmap& b);
 
     // Header Data
     // Block 1
@@ -52,12 +52,21 @@ private:
     uint32_t red_mask, green_mask, blue_mask, alpha_mask;
     std::vector<uint8_t> color_space; // 68 bytes of this
     
-    std::vector<uint32_t> data;
+    std::vector<unsigned char> data;
 
 public:
     Bitmap();
 
     void print_header();
+
+    // Pixel getters/setters
+    unsigned char& r(uint32_t x, uint32_t y);
+    unsigned char& g(uint32_t x, uint32_t y);
+    unsigned char& b(uint32_t x, uint32_t y);
+    unsigned char& a(uint32_t x, uint32_t y);
+
+    const uint32_t width() {return image_width;}
+    const uint32_t height() {return image_height;}
 };
 
 /**
