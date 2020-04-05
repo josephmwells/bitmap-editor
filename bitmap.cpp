@@ -6,11 +6,10 @@ Bitmap::Bitmap()
 
 std::istream & operator>>(std::istream & in, Bitmap & b)
 {
-  int offset{0};
+  int offset = 0;
 
   // Read in file type
   in >> b.file_type[0] >> b.file_type[1];
-  b.file_type[2] = '\0';
   if(strncmp(b.file_type, "BM", 2) != 0) {
     throw BitmapException("invalid file type", offset);
   }
@@ -90,12 +89,13 @@ std::istream & operator>>(std::istream & in, Bitmap & b)
   }
 
   std::cout << offset << " bytes written\n";
+  b.print_header();
   return in;
 }
 
 std::ostream & operator<<(std::ostream & out, const Bitmap & b)
 {  
-  int offset{0};
+  int offset = 0;
 
   // Write file type
   out << b.file_type[0] << b.file_type[1];
@@ -208,7 +208,7 @@ unsigned char& Bitmap::r(uint32_t x, uint32_t y)
 {
   switch(bits_per_pixel) {
     case(24):
-      return data.at(4 * (y * image_width + x));
+      return data.at(3 * (y * image_width + x) + 2);
     case(32):
       return data.at(4 * (y * image_width + x) + 3);
   }
@@ -219,7 +219,7 @@ unsigned char& Bitmap::g(uint32_t x, uint32_t y)
 {
    switch(bits_per_pixel) {
     case(24):
-      return data.at(4 * (y * image_width + x));
+      return data.at(3 * (y * image_width + x) + 1);
     case(32):
       return data.at(4 * (y * image_width + x) + 2);
    }
@@ -230,7 +230,7 @@ unsigned char& Bitmap::b(uint32_t x, uint32_t y)
 {
   switch(bits_per_pixel) {
     case(24):
-      return data.at(4 * (y * image_width + x));
+      return data.at(3 * (y * image_width + x));
     case(32):
       return data.at(4 * (y * image_width + x) + 1);
    }
@@ -255,14 +255,13 @@ void cellShade(Bitmap & b)
       uint8_t& red = (uint8_t&)b.r(x, y);
       uint8_t& green = (uint8_t&)b.g(x, y);
       uint8_t& blue = (uint8_t&)b.b(x, y);
-      
+
       if(red < 64)
         red = 0;
       else if(red < 192)
         red = 128;
       else
         red = 255;
-      
       if(green < 64)
         green = 0;
       else if(green < 192)
@@ -282,14 +281,93 @@ void cellShade(Bitmap & b)
 
 void grayscale(Bitmap & b)
 {
+  for(int y = 0; y < b.height(); ++y) {
+    for(int x = 0; x < b.width(); ++x) {
+      uint8_t& red = (uint8_t&)b.r(x, y);
+      uint8_t& green = (uint8_t&)b.g(x, y);
+      uint8_t& blue = (uint8_t&)b.b(x, y);
+
+      uint8_t greyscale = (red + green + blue) / 3;
+      red = greyscale;
+      blue = greyscale;
+      green = greyscale;
+    }
+  }
 }
 
 void pixelate(Bitmap & b)
 {
+  uint32_t block_size = 16;
+
+  uint32_t block_width = (b.width()/block_size);
+  uint32_t block_height = (b.height()/block_size);
+  
+  for(uint32_t y = 0; y < block_height*block_size; y += block_size) {
+    for(uint32_t x = 0; x < block_width*block_size; x += block_size) {
+      uint32_t average_red = 0;
+      uint32_t average_green = 0;
+      uint32_t average_blue = 0;
+
+      // Sum together 16x16 block pixels to find the average
+      for(uint32_t y_block = 0; y_block < block_size; ++y_block) {
+        for(uint32_t x_block = 0; x_block < block_size; ++x_block) {
+          average_red += b.r(x+x_block, y+y_block);
+          average_green += b.g(x+x_block, y+y_block);
+          average_blue += b.b(x+x_block, y+y_block);
+        }
+      }
+      average_red = average_red/(block_size*block_size);
+      average_green = average_green/(block_size*block_size);
+      average_blue = average_blue/(block_size*block_size);
+
+      // apply average to 16x16 block
+      for(uint32_t y_block =0; y_block < block_size; ++y_block) {
+        for(uint32_t x_block = 0; x_block < block_size; ++x_block) {
+          b.r(x+x_block, y+y_block) = average_red;
+          b.g(x+x_block, y+y_block) = average_green;
+          b.b(x+x_block, y+y_block) = average_blue;
+        }
+      }
+    }
+  }
 }
 
 void blur(Bitmap & b)
 {
+  std::vector<int> gause_matrix = {1,4,6,4,1,4,16,24,16,4,6,24,36,24,6,4,16,24,16,4,1,4,6,4,1}; 
+
+  for(int y = 0; y < b.height(); ++y) {
+    for(int x = 0; x < b.width(); ++x) {
+      uint32_t r_new;
+      uint32_t g_new;
+      uint32_t b_new;
+      for(int i = -2; i <= 2; ++i) {
+        for(int j = -2; j <= 2; ++j) {
+          // If i or j is negative out of bounds, add black pixel
+          if(x+j < 0 || y+i < 0) 
+          {
+            continue;
+          }
+          // If i or j is positive out of bounds, add black pixel
+          if(x+j >= b.width() || y+i >= b.height()) 
+          {
+            continue;
+          }
+          r_new += b.r(x+j, y+i) * gause_matrix.at((i+2) * 5 + (j+2)); 
+          g_new += b.g(x+j, y+i) * gause_matrix.at((i+2) * 5 + (j+2)); 
+          b_new += b.b(x+j, y+i) * gause_matrix.at((i+2) * 5 + (j+2)); 
+        }
+      }
+      r_new /= 256;
+      g_new /= 256;
+      b_new /= 256;
+
+      b.r(x, y) = r_new;
+      b.g(x, y) = g_new;
+      b.b(x, y) = b_new;
+    }
+  }
+  
 }
 
 void rot90(Bitmap & b)
