@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <string.h>
+#include <math.h>
+#include <functional>
 
 class Bitmap
 {
