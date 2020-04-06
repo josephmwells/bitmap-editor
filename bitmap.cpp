@@ -149,7 +149,7 @@ void Bitmap::print_header()
 {
   std::cout << "File Type: " << file_type_ << '\n';
   std::cout << "File Size: " << file_size_  << '\n';
-  std::cout << "Pixel Data Offset:  " << data_offset_ << '\n';
+  std::cout << "Pixel Data Offset: " << data_offset_ << '\n';
   std::cout << "Header Size: " << header_size_ << '\n';
   std::cout << "Image Width: " << image_width_ << '\n';
   std::cout << "Image Height: " << image_height_ << '\n';
