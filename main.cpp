@@ -101,6 +101,10 @@ int main(int argc, char** argv)
     {
         scaleDown(image);
     }
+    if(flag == "-red")
+    {
+      redChannel(image);
+    }
 
     out.open(outfile, ios::binary);
     out << image;

@@ -2,7 +2,6 @@
 #include <vector>
 #include <string.h>
 #include <math.h>
-#include <functional>
 
 class Bitmap
 {
@@ -34,27 +33,39 @@ private:
      */
     friend std::ostream& operator<<(std::ostream& out, const Bitmap& b);
 
+    // should these be public ?
+    // otherwise I just use getter and setter functions with slightly altered variable names
+    
     // Header Data
     // Block 1
-    char file_type[2];
-    uint32_t file_size;
-    uint32_t garbage;
-    uint32_t pixel_data_offset;
+    char file_type_[2];
+    uint32_t file_size_;
+    uint32_t garbage_;
+    uint32_t data_offset_;
+
     // Block 2
-    uint32_t header_size;
-    int32_t image_width, image_height;
-    uint16_t planes;
-    uint16_t bits_per_pixel;
-    uint32_t compression;
-    uint32_t raw_bitmap_size;
-    int32_t x_pixels_per_meter, y_pixels_per_meter;
-    uint32_t total_colors;
-    uint32_t important_colors;
+    uint32_t header_size_;
+    int32_t image_width_;
+    int32_t image_height_;
+    uint16_t planes_;
+    uint16_t color_depth_;
+    uint32_t compression_;
+    uint32_t data_size_;
+    int32_t x_pixels_per_meter_;
+    int32_t y_pixels_per_meter_;
+    uint32_t total_colors_;
+    uint32_t important_colors_;
+
     // Block 3
-    uint32_t red_mask, green_mask, blue_mask, alpha_mask;
-    std::vector<uint8_t> color_space; // 68 bytes of this
+    uint32_t red_mask_;
+    uint32_t green_mask_;
+    uint32_t blue_mask_;
+    uint32_t alpha_mask_;
+    std::vector<uint8_t> color_space_; // 68 bytes of this
     
-    std::vector<unsigned char> data;
+    std::vector<unsigned char> data_;
+
+    uint32_t padding_;
 
 public:
     Bitmap();
@@ -67,9 +78,19 @@ public:
     unsigned char& b(uint32_t x, uint32_t y);
     unsigned char& a(uint32_t x, uint32_t y);
 
-    const uint32_t width() {return image_width;}
-    const uint32_t height() {return image_height;}
+    // Getters and Setters vs public variables?
+    int32_t& width() {return image_width_;}
+    int32_t& height() {return image_height_;}
+    uint32_t& size() {return data_size_;}
+    uint32_t& fsize() {return file_size_;}
+    uint32_t& padding() {return padding_;}
+    std::vector<unsigned char>& image() {return data_;}
+
+    uint32_t depth() const {return color_depth_;}
+    uint32_t data_offset() const {return data_offset_;}
 };
+
+void redChannel(Bitmap& b);
 
 /**
  * cell shade an image.
