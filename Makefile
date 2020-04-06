@@ -13,3 +13,6 @@ mac-debug:
 
 mac-verbose:
 	clang++ -std=c++17 -g -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic main.cpp bitmap.cpp effects.cpp -o bitmap
+
+clean:
+	rm *.bmp bitmap
