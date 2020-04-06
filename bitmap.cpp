@@ -72,6 +72,7 @@ std::istream & operator>>(std::istream & in, Bitmap & b)
   }
 
   // Add padding if 24 bit image
+  b.padding_ = 0;
   if (b.color_depth_ == 24) {
     uint32_t padding = 4 - ((3 * b.image_width_) % 4);
     b.padding_ = (padding == 4) ? 0 : padding;
