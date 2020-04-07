@@ -25,14 +25,14 @@ std::istream & operator>>(std::istream & in, Bitmap & b)
   in.read((char*)&b.data_offset_, 4);
   offset += 4;
   in.read((char*)&b.header_size_, 4);
-  if(b.header_size_ != 40)
-    throw BitmapException("header size is invalid, should be 40 bytes", offset);
   offset += 4;
   in.read((char*)&b.image_width_, 4);
   offset += 4;
   in.read((char*)&b.image_height_, 4);
   offset += 4;
   in.read((char*)&b.planes_, 2);
+  if(b.planes_ != 1)
+    throw BitmapException("planes is invalid, should be 1", offset);
   offset += 2;
   in.read((char*)&b.color_depth_, 2);
   offset += 2;
