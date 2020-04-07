@@ -332,8 +332,6 @@ void scaleUp(Bitmap & b)
   b.size() = scaled.size();
   b.fsize() = b.size() + b.data_offset();
   b.padding() = padding;
-
-  b.print_header();
 }
 
 void scaleDown(Bitmap & b)
@@ -367,6 +365,4 @@ void scaleDown(Bitmap & b)
   b.size() = scaled.size();
   b.fsize() = b.size() + b.data_offset();
   b.padding() = padding;
-
-  b.print_header();
 }

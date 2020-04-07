@@ -78,8 +78,8 @@ std::istream & operator>>(std::istream & in, Bitmap & b)
     b.padding_ = (padding == 4) ? 0 : padding;
   }
 
-  std::cout << offset << " bytes written\n";
-  b.print_header();
+  //std::cout << offset << " bytes written\n";
+  //b.print_header();
   return in;
 }
 
@@ -142,7 +142,7 @@ std::ostream & operator<<(std::ostream & out, const Bitmap & b)
     offset += 1;
   }
 
-  std::cout << std::dec <<  offset << " bytes written\n";
+  //std::cout << std::dec <<  offset << " bytes written\n";
   return out;
 }
 
