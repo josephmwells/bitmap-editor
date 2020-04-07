@@ -137,6 +137,7 @@ void blur(Bitmap & b)
 void rot90(Bitmap & b)
 {
   uint32_t padding = 4 - (3 * b.height()) % 4;
+  padding = (padding == 4) ? 0 : padding;
   std::vector<unsigned char> rotate;
 
   for(int x = b.width() - 1; x >= 0; --x) {
@@ -182,6 +183,7 @@ void rot180(Bitmap & b)
 void rot270(Bitmap & b)
 {
   uint32_t padding = 4 - (3 * b.height()) % 4;
+  padding = (padding == 4) ? 0 : padding;
   std::vector<unsigned char> rotate;
 
   for(int x = 0; x < b.width(); ++x) {
@@ -244,6 +246,7 @@ void fliph(Bitmap & b)
 void flipd1(Bitmap & b)
 {
   uint32_t padding = 4 - (3 * b.height()) % 4;
+  padding = (padding == 4) ? 0 : padding;
   std::vector<unsigned char> flipped;
 
   for(int x = b.width() -1; x >= 0; --x) {
@@ -268,6 +271,7 @@ void flipd1(Bitmap & b)
 void flipd2(Bitmap & b)
 {
   uint32_t padding = 4 - (3 * b.height()) % 4;
+  padding = (padding == 4) ? 0 : padding;
   std::vector<unsigned char> flipped;
 
   for(int x = 0; x < b.width(); ++x) {
