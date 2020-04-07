@@ -33,10 +33,12 @@ else
 fi
 
 if [ -f $file ]; then
+  echo "Generating images . . ."
   for flag in -c -g -p -b -r90 -r180 -r270 -v -h -d1 -d2 -grow -shrink 
   do
     ./bitmap $flag "$1" "${fname}${flag}.bmp"
   done
+  echo "Finished generating images!"
   exit 0
 else
   echo "error: file does not exist"
