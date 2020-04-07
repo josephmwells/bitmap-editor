@@ -15,5 +15,5 @@ You can use it as follows:
 
 `generate_images -f path/to/file.bmp`
 
-This will generate all of the images for the assignment and output them into the same folder as the path given.
+This will generate all of the images for the assignment and output them into a new folder with the same name as the file.
 
