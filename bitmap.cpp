@@ -25,6 +25,8 @@ std::istream & operator>>(std::istream & in, Bitmap & b)
   in.read((char*)&b.data_offset_, 4);
   offset += 4;
   in.read((char*)&b.header_size_, 4);
+  if(b.header_size_ != 40)
+    throw BitmapException("header size is invalid, should be 40 bytes", offset);
   offset += 4;
   in.read((char*)&b.image_width_, 4);
   offset += 4;
@@ -35,12 +37,18 @@ std::istream & operator>>(std::istream & in, Bitmap & b)
   in.read((char*)&b.color_depth_, 2);
   offset += 2;
   in.read((char*)&b.compression_, 4);
+  if(b.compression_ != 0 && b.compression_ != 3)
+    throw BitmapException("compression is invalid, should be 0 or 3", offset);
   offset += 4;
   in.read((char*)&b.data_size_, 4);
   offset += 4;
   in.read((char*)&b.x_pixels_per_meter_, 4);
+  if(b.x_pixels_per_meter_ != 2835)
+    throw BitmapException("x pixels per meter is invalid, should be 2835", offset);
   offset += 4;
   in.read((char*)&b.y_pixels_per_meter_, 4);
+  if(b.y_pixels_per_meter_ != 2835)
+    throw BitmapException("y pixels per meter is invalid, should be 2835", offset);
   offset += 4;
   in.read((char*)&b.total_colors_, 4);
   offset += 4;
@@ -142,7 +150,8 @@ std::ostream & operator<<(std::ostream & out, const Bitmap & b)
     offset += 1;
   }
 
-  //std::cout << std::dec <<  offset << " bytes written\n";
+  if(offset != b.file_size_)
+    throw BitmapException("error while writing to output | bytes written does not match file size in header", offset);
   return out;
 }
 
