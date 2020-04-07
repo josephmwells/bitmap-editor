@@ -2,6 +2,9 @@
 
 function usage
 {
+  echo "description:"
+  echo "generate_images will generate all of the required images for the assignment"
+  echo "and output them in a new folder"
   echo "usage:"
   echo "generate_images -f path/to/file.bmp\n"
   echo "options:"
@@ -34,9 +37,10 @@ fi
 
 if [ -f $file ]; then
   echo "Generating images . . ."
+  mkdir ${fname}
   for flag in -c -g -p -b -r90 -r180 -r270 -v -h -d1 -d2 -grow -shrink 
   do
-    ./bitmap $flag "$1" "${fname}${flag}.bmp"
+    ./bitmap $flag "$file" "${fname}/${fname}${flag}.bmp"
   done
   echo "Finished generating images!"
   exit 0
