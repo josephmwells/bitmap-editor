@@ -1,6 +1,6 @@
-# Assignment
+## Assignment
 We work with images all the time, but surprisingly few computer scientists know how images really work. 
-Well, we going to fix that. We’re learning how to read and manipulate images. How? by making instagram filters.
+Well, we are going to fix that. We’re learning how to read and manipulate images. How? By making instagram filters.
 
 ## Requirements
 1. **Basic:** read and write .bmp images by overloading the >> and << operators
@@ -12,6 +12,8 @@ Well, we going to fix that. We’re learning how to read and manipulate images. 
 ## Misc
 There's a shell script included in the repository named `generate_images`.
 You can use it as follows:
+
 `generate_images -f path/to/file.bmp`
+
 This will generate all of the images for the assignment and output them into the same folder as the path given.
 
