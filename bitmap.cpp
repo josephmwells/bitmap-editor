@@ -250,8 +250,3 @@ void BitmapException::print_exception()
   std::cout << "Error in bitmap at position 0x" << std::hex << _position;
   std::cout << " : " << _message << '\n';
 }
-
-const char* BitmapException::what() const noexcept
-{
-  return "Reading in the bitmap has failed";
-}
