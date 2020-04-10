@@ -40,6 +40,7 @@ if [ -f $file ]; then
   mkdir ${fname}
   for flag in -c -g -p -b -r90 -r180 -r270 -v -h -d1 -d2 -grow -shrink 
   do
+    echo "running with flag: ${flag}"
     ./bitmap $flag "$file" "${fname}/${fname}${flag}.bmp"
   done
   echo "Finished generating images!"
