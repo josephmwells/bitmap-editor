@@ -48,7 +48,8 @@ int main(int argc, char** argv)
         e.print_exception();
         return 0;
     }
-
+    try
+    {
     if(flag == "-c"s)
     {
         cellShade(image);
@@ -105,9 +106,18 @@ int main(int argc, char** argv)
     {
       redChannel(image);
     }
+    } catch (BitmapException& e) {
+      e.print_exception();
+      return 0;
+    }
 
     out.open(outfile, ios::binary);
+    try{
     out << image;
+    } catch (BitmapException&e ) {
+      e.print_exception();
+      return 0;
+    }
     out.close();
 
     return 0;
