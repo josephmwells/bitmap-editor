@@ -158,6 +158,8 @@ void rot90(Bitmap & b)
   int32_t height = b.height();
   b.width() = height;
   b.height() = width;
+  b.size() = rotate.size();
+  b.fsize() = b.size() + b.data_offset();
 }
 
 void rot180(Bitmap & b)
@@ -204,6 +206,8 @@ void rot270(Bitmap & b)
   int32_t height = b.height();
   b.width() = height;
   b.height() = width;
+  b.size() = rotate.size();
+  b.fsize() = b.size() + b.data_offset();
 }
 
 void flipv(Bitmap & b)
@@ -266,6 +270,8 @@ void flipd1(Bitmap & b)
   int32_t height = b.height();
   b.width() = height;
   b.height() = width;
+  b.size() = flipped.size();
+  b.fsize() = b.size() + b.data_offset();
 }
 
 void flipd2(Bitmap & b)
@@ -291,6 +297,8 @@ void flipd2(Bitmap & b)
   int32_t height = b.height();
   b.width() = height;
   b.height() = width;
+  b.size() = flipped.size();
+  b.fsize() = b.size() + b.data_offset();
 }
 
 void scaleUp(Bitmap & b)
