@@ -3,8 +3,8 @@
 // Added this in for testing
 void redChannel(Bitmap & b)
 {
-  for(uint32_t y = 0; y < b.height(); ++y) {
-    for(uint32_t x = 0; x < b.width(); ++x) {
+  for (int y = 0; y < b.height(); ++y) {
+    for (int x = 0; x < b.width(); ++x) {
       b.g(x, y) = 0;
       b.b(x, y) = 0;
     }
@@ -13,8 +13,8 @@ void redChannel(Bitmap & b)
 
 void cellShade(Bitmap & b)
 {
-  for(uint32_t y = 0; y < b.height(); ++y) {
-    for(uint32_t x = 0; x < b.width(); ++x) {
+  for (int y = 0; y < b.height(); ++y) {
+    for (int x = 0; x < b.width(); ++x) {
       uint8_t& red = (uint8_t&)b.r(x, y);
       uint8_t& green = (uint8_t&)b.g(x, y);
       uint8_t& blue = (uint8_t&)b.b(x, y);
@@ -67,15 +67,15 @@ void pixelate(Bitmap & b)
   uint32_t block_width = (b.width()/block_size);
   uint32_t block_height = (b.height()/block_size);
   
-  for(uint32_t y = 0; y < block_height*block_size; y += block_size) {
-    for(uint32_t x = 0; x < block_width*block_size; x += block_size) {
+  for (int y = 0; y < block_height*block_size; y += block_size) {
+    for (int x = 0; x < block_width*block_size; x += block_size) {
       uint32_t average_red = 0;
       uint32_t average_green = 0;
       uint32_t average_blue = 0;
 
       // Sum together 16x16 block pixels to find the average color
-      for(uint32_t y_block = 0; y_block < block_size; ++y_block) {
-        for(uint32_t x_block = 0; x_block < block_size; ++x_block) {
+      for (int y_block = 0; y_block < block_size; ++y_block) {
+        for (int x_block = 0; x_block < block_size; ++x_block) {
           average_red += b.r(x+x_block, y+y_block);
           average_green += b.g(x+x_block, y+y_block);
           average_blue += b.b(x+x_block, y+y_block);
@@ -86,8 +86,8 @@ void pixelate(Bitmap & b)
       average_blue = average_blue/(block_size*block_size);
 
       // apply average to 16x16 block
-      for(uint32_t y_block =0; y_block < block_size; ++y_block) {
-        for(uint32_t x_block = 0; x_block < block_size; ++x_block) {
+      for (int y_block =0; y_block < block_size; ++y_block) {
+        for (int x_block = 0; x_block < block_size; ++x_block) {
           b.r(x+x_block, y+y_block) = average_red;
           b.g(x+x_block, y+y_block) = average_green;
           b.b(x+x_block, y+y_block) = average_blue;
@@ -149,7 +149,7 @@ void rot90(Bitmap & b)
       rotate.push_back(b.r(x, y));
     }
     if(b.depth() == 24)
-      for (uint32_t i = 0; i < padding; ++i)
+      for (int i = 0; i < padding; ++i)
         rotate.push_back(0);
   }
 
@@ -175,7 +175,7 @@ void rot180(Bitmap & b)
       rotate.push_back(b.r(x, y));
     }
     if(b.depth() == 24)
-      for (uint32_t i = 0; i < b.padding(); ++i)
+      for (int i = 0; i < b.padding(); ++i)
         rotate.push_back(0);
   }
 
@@ -197,7 +197,7 @@ void rot270(Bitmap & b)
       rotate.push_back(b.r(x, y));
     }
     if(b.depth() == 24)
-      for (uint32_t i = 0; i < padding; ++i)
+      for (int i = 0; i < padding; ++i)
         rotate.push_back(0);
   }
 
@@ -222,7 +222,7 @@ void flipv(Bitmap & b)
       flipped.push_back(b.g(x, y));
       flipped.push_back(b.r(x, y));
     }
-    for(uint32_t i = 0; i < b.padding(); i++)
+    for (int i = 0; i < b.padding(); i++)
       flipped.push_back(0);
   }
   b.image() = flipped;
@@ -241,7 +241,7 @@ void fliph(Bitmap & b)
       flipped.push_back(b.r(x, y));
     }
     if(b.depth() == 24)
-      for(uint32_t i = 0; i < b.padding(); i++)
+      for (int i = 0; i < b.padding(); i++)
         flipped.push_back(0);
   }
   b.image() = flipped;
@@ -262,7 +262,7 @@ void flipd1(Bitmap & b)
       flipped.push_back(b.r(x, y));
     }
     if(b.depth() == 24)
-      for(uint32_t i = 0; i < padding; i++)
+      for (int i = 0; i < padding; i++)
         flipped.push_back(0);
   }
   b.image() = flipped;
@@ -289,7 +289,7 @@ void flipd2(Bitmap & b)
       flipped.push_back(b.r(x, y));
     }
     if(b.depth() == 24)
-      for(uint32_t i = 0; i < padding; i++)
+      for (int i = 0; i < padding; i++)
         flipped.push_back(0);
   }
   b.image() = flipped;
@@ -316,7 +316,7 @@ void scaleUp(Bitmap & b)
       unsigned char blue = b.b(x, y);
 
       // Duplicate a pixel
-      for(uint32_t i = 0; i < 2; i++) {
+      for (int i = 0; i < 2; i++) {
         if(b.depth() == 32) {
           unsigned char alpha = b.a(x, y);
           row.push_back(alpha);
@@ -327,7 +327,7 @@ void scaleUp(Bitmap & b)
       }
     }
     if(b.depth() == 24) {
-      for (uint32_t i = 0; i < padding; ++i) {
+      for (int i = 0; i < padding; ++i) {
         row.push_back(0);
       }
     }
@@ -366,7 +366,7 @@ void scaleDown(Bitmap & b)
       scaled.push_back(b.r(x, y));
     }
     if(b.depth() == 24){
-      for(uint32_t i = 0; i < padding; ++i) {
+      for (int i = 0; i < padding; ++i) {
         scaled.push_back(0);
       }
     }

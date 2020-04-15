@@ -72,7 +72,7 @@ std::istream & operator>>(std::istream & in, Bitmap & b)
   }
 
   // Read in pixel data
-  for (uint32_t i = 0; i < b.data_size_; ++i) {
+  for (int i = 0; i < b.data_size_; ++i) {
     unsigned char pixel;
     in.read((char*)&pixel, 1);
     b.data_.push_back(pixel);
